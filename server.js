@@ -1,9 +1,13 @@
 'use strict';
 
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
+app.use(bodyParser.json())
 
 var port = 3030 || process.env.PORT;
+
+
 
 var books = {
 	"library": [{
@@ -27,17 +31,21 @@ app.get('/books', function(req, res) {
 })
 
 app.get('/books/:id', function(req, res) {
-	let paramsId = req.params;
-	// console.log(paramsId)
+	var paramsId = req.params.id;
+	var result;
 	console.log(books.library.length)
 
 	for(var i = 0; i < books.library.length; i++) {
 		if(paramsId == books.library[i].id) {
-			res.send(books.library[i]);
+			console.log("Book found");
+			result = books.library[i];
+			break;
 		} else {
-			res.send("Not found the book");
+			console.log("Book not found");
+			result = "Book not found";
 		}
 	}
+	res.send(result);
 })
 
 app.listen(port, function() {
