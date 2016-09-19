@@ -2,6 +2,8 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
+var _ = require('underscore');
+
 var app = express();
 var path = require('path');
 
@@ -21,15 +23,28 @@ var books = {
 	"library": [{
 		"name": "Harry Potter",
 		"author": "JK Rowling",
+		"authorId": "jk-rowling",
 		"id": 789
 	}, {
 		"name": "Twilight",
 		"author": "Steph Smith",
+		"authorId": "steph-smith",
 		"id": 123
 	}, {
 		"name": "Sherlock",
 		"author": "Arthur Conan Doyle",
+		"authorId": "arthur-conan-doyle",
 		"id": 456
+	},{
+		"name": "The Sweet Gold",
+		"author": "Daniel James",
+		"authorId": "daniel-james",
+		"id": 987
+	},{
+		"name": "Shark Core",
+		"author": "Daniel James",
+		"authorId": "daniel-james",
+		"id": 382
 	}]
 };
 
@@ -44,34 +59,47 @@ app.get('/', function(req, res) {
 });
 
 app.get('/books/:id', function(req, res) {
-	var paramsId = req.params.id;
+	var bookId = req.params.id;
 	var result;
-	console.log(books.library.length)
 
 	for(var i = 0; i < books.library.length; i++) {
-		if(paramsId == books.library[i].id) {
-			console.log("Book found");
+		if(bookId == books.library[i].id) {
 			result = books.library[i];
 			break;
 		} else {
-			console.log("Book not found");
 			result = "Book not found";
 		}
 	}
 	res.send(result);
 })
 
+
 app.post('/books', function(req, res){
 	var newBook = {
 		id : req.body.id,
 		name : req.body.name,
-		author : req.body.author
+		author : req.body.author,
+		authorId : req.body.authorId
 		}
 	res.send(newBook);
 	books.library.push(newBook);
 	books.save();
 });
 
-app.listen(port, function(req, res) {
-	console.log("Listening on: " + port);
+app.get('/books/author/:authorId', function(req, res) {
+	var authorId = req.params.authorId;
+	var result = {};
+
+	for (var i = 0; i < books.library.length; i++) {
+		if(authorId == books.library[i].authorId) {
+			console.log(books.library[i]);
+			_.extend(result, books.library[i]);
+		}
+	}
+
+	res.json(result);
 })
+
+app.listen(port, function() {
+	console.log("Listening on: " + port);
+});
