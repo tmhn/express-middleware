@@ -54,7 +54,7 @@ app.get('/books', function(req, res) {
 	res.send(books);
 });
 
-app.get('/', function(req, res) {
+app.get('/books/new', function(req, res) {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 
